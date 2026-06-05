@@ -547,6 +547,47 @@ var items = [
 ];
 var nextItemId = 4;
 
+// ---- GOOGLE SHEETS ----
+var SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+function postToSheet(data) {
+  if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE') !== -1) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(data)
+  }).catch(function(){});
+}
+
+function loadFromSheet(action, callback) {
+  if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE') !== -1) { if (callback) callback(null); return; }
+  fetch(SCRIPT_URL + '?action=' + action)
+    .then(function(r) { return r.json(); })
+    .then(function(d) { if (callback) callback(d); })
+    .catch(function() { if (callback) callback(null); });
+}
+
+function loadItemsFromSheet() {
+  loadFromSheet('items', function(data) {
+    if (data && data.length > 0) {
+      items = data;
+      nextItemId = Math.max.apply(null, items.map(function(i) { return i.id; })) + 1;
+    }
+  });
+}
+
+function loadRSVPsFromSheet(callback) {
+  loadFromSheet('rsvps', function(data) {
+    if (data && Array.isArray(data)) rsvps = data;
+    if (callback) callback();
+  });
+}
+
+function saveItemsToSheet() {
+  postToSheet({type: 'save_items', items: items});
+}
+
 // ---- LOGO ----
 // logo removed
 
@@ -564,7 +605,7 @@ function showPage(p){
   if(nb) nb.classList.add('active');
   window.scrollTo(0,0);
   if(p==='auction') renderAuctionGrid();
-  if(p==='admin') renderAdmin();
+  if(p==='admin') loadRSVPsFromSheet(renderAdmin);
 }
 
 // ---- RSVP ----
@@ -603,7 +644,9 @@ function submitRSVP(){
     setTimeout(function(){var f=document.getElementById('guest-name-2');if(f)f.focus();},100);
     return;
   }
-  rsvps.push({name:name,email:email,phone:phone,guests:guests,ts:new Date().toLocaleString()});
+  var rsvpTs = new Date().toLocaleString();
+  rsvps.push({name:name,email:email,phone:phone,guests:guests,ts:rsvpTs});
+  postToSheet({type:'rsvp',name:name,email:email,phone:phone,guests:guests,ts:rsvpTs});
   document.getElementById('rsvp-name').value='';
   document.getElementById('rsvp-email').value='';
   document.getElementById('rsvp-phone').value='';
@@ -734,6 +777,7 @@ function submitBid(id, minBid){
   var now=new Date();
   var ts=now.toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'})+' '+now.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
   item.bids.push({name:name,email:email,phone:phone,amount:amt,ts:ts});
+  postToSheet({type:'bid',itemId:item.id,itemTitle:item.title,name:name,email:email,phone:phone,amount:amt,ts:ts});
   document.getElementById('bid-success-'+id).classList.add('show');
   setTimeout(function(){closeModal();renderAuctionGrid();},1800);
 }
@@ -759,6 +803,7 @@ function submitGuestNames(){
   var r=window._pendingRSVP;
   r.extraGuests=extraGuests;
   rsvps.push(r);
+  postToSheet({type:'rsvp',name:r.name,email:r.email,phone:r.phone,guests:r.guests,extraGuests:r.extraGuests||[],ts:r.ts});
   window._pendingRSVP=null;
   window._guestCount=null;
   window._isPlus=false;
@@ -912,12 +957,13 @@ function renderAdminItems(){
 
 function toggleItemStatus(id){
   var item=items.find(function(i){return i.id===id});
-  if(item) item.open=!item.open;
+  if(item){ item.open=!item.open; saveItemsToSheet(); }
   renderAdminItems();
 }
 function deleteItem(id){
   if(!confirm('Delete this item and all its bids?')) return;
   items=items.filter(function(i){return i.id!==id});
+  saveItemsToSheet();
   renderAdminItems();
 }
 function saveItem(id){
@@ -928,6 +974,7 @@ function saveItem(id){
   item.fmv=parseFloat(document.getElementById('edit-fmv-'+id).value)||item.fmv;
   item.startBid=parseFloat(document.getElementById('edit-start-'+id).value)||item.startBid;
   item.img=document.getElementById('edit-img-'+id).value;
+  saveItemsToSheet();
   renderAdminItems();
   alert('Saved.');
 }
@@ -947,6 +994,7 @@ function addItem(){
   document.getElementById('new-fmv').value='';document.getElementById('new-start').value='';
   document.getElementById('new-img').value='';
   document.getElementById('add-item-form').classList.remove('open');
+  saveItemsToSheet();
   renderAdminItems();
 }
 function deleteRSVP(i){
@@ -985,6 +1033,7 @@ function downloadCSV(type){
 document.addEventListener('DOMContentLoaded',function(){
   var go=document.getElementById('guest-names-overlay');
   if(go) go.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');window._pendingRSVP=null;}});
+  loadItemsFromSheet();
 });
 </script>
 
