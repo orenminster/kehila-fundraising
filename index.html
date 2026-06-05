@@ -540,12 +540,8 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 <script>
 // ---- DATA ----
 var rsvps = [];
-var items = [
-  {id:1, title:"Hamsa in Blue", desc:"Mixed media on canvas. A vibrant hamsa symbol rendered in deep cobalt and turquoise by a Grade 6 student.", fmv:180, startBid:75, open:true, img:"", bids:[{name:"D. Levine", email:"dl@example.com", phone:"905-555-0101", amount:85, ts:"Jun 1, 2026 10:22 am"}]},
-  {id:2, title:"Tree of Life Mosaic", desc:"Hand-cut tile mosaic. Intricate tree motif with gold and emerald tiles, crafted over eight weeks by Grade 7–8 students.", fmv:350, startBid:150, open:true, img:"", bids:[{name:"R. Cohen", email:"rc@example.com", phone:"905-555-0102", amount:165, ts:"Jun 3, 2026 2:14 pm"}]},
-  {id:3, title:"Hamilton Skyline Linocut", desc:"Relief print on archival paper. Hand-carved linocut print of the Hamilton skyline from the escarpment, Grade 5.", fmv:120, startBid:50, open:true, img:"", bids:[]}
-];
-var nextItemId = 4;
+var items = [];
+var nextItemId = 1;
 
 // ---- GOOGLE SHEETS ----
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypNf8LT_8I_CT01iaC-ASEaEtX4wDP0XkQgg-9XBeo9v2WGO80Oh7FoAjcS4fGUPs_ZQ/exec';
@@ -752,6 +748,12 @@ function checkBidAmt(el, minBid){
   var v=parseFloat(el.value);
   if(el.value!=='' && (!v||v<minBid)){msgEl.style.display='block';}
   else{msgEl.style.display='none';}
+}
+function driveImgUrl(url) {
+  if (!url) return '';
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w800';
+  return url;
 }
 function validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
 function validateCAPhone(p){
@@ -973,7 +975,7 @@ function saveItem(id){
   item.desc=document.getElementById('edit-desc-'+id).value;
   item.fmv=parseFloat(document.getElementById('edit-fmv-'+id).value)||item.fmv;
   item.startBid=parseFloat(document.getElementById('edit-start-'+id).value)||item.startBid;
-  item.img=document.getElementById('edit-img-'+id).value;
+  item.img=driveImgUrl(document.getElementById('edit-img-'+id).value);
   saveItemsToSheet();
   renderAdminItems();
   alert('Saved.');
@@ -987,7 +989,7 @@ function addItem(){
   var desc=document.getElementById('new-desc').value.trim();
   var fmv=parseFloat(document.getElementById('new-fmv').value)||0;
   var start=parseFloat(document.getElementById('new-start').value)||0;
-  var img=document.getElementById('new-img').value.trim();
+  var img=driveImgUrl(document.getElementById('new-img').value.trim());
   if(!title){alert('Title is required.');return;}
   items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,open:true,img:img,bids:[]});
   document.getElementById('new-title').value='';document.getElementById('new-desc').value='';
