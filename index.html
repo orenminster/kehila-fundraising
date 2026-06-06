@@ -232,11 +232,64 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 .footer-gear{background:none;border:none;color:rgba(255,255,255,.18);cursor:pointer;font-size:14px;padding:4px 8px;border-radius:4px;margin-top:.5rem;transition:color .2s}
 .footer-gear:hover{color:rgba(255,255,255,.55)}
 
+/* HAMBURGER */
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;flex-direction:column;gap:5px;margin-left:4px}
+.nav-hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .2s}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* MOBILE MENU */
+.nav-mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(13,27,62,.98);padding:.75rem 1rem 1rem;flex-direction:column;gap:2px;z-index:199;border-top:1px solid rgba(255,255,255,.1)}
+.nav-mobile-menu.open{display:flex}
+.nav-mobile-btn{background:none;border:none;color:rgba(255,255,255,.75);font-family:'DM Sans',sans-serif;font-size:15px;letter-spacing:.04em;padding:13px 16px;text-align:left;border-radius:6px;cursor:pointer;width:100%;transition:all .2s}
+.nav-mobile-btn:hover,.nav-mobile-btn:active{background:rgba(255,255,255,.08);color:#fff}
+.nav-mobile-btn.cta{background:var(--teal);color:var(--navy);font-weight:600;margin-top:.35rem;text-align:center;justify-content:center}
+
 @media(max-width:700px){
-  .two-col,.form-row,.bid-grid,.item-edit-grid,.price-row,.stat-grid{grid-template-columns:1fr}
-  .hero h1{font-size:2.5rem}
+  /* Nav */
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
   nav{padding:0 1rem}
-  /* logo text scales fine */
+
+  /* Hero */
+  .hero{padding:80px 1.25rem 3rem}
+  .hero h1{font-size:2.2rem}
+  .hero-sub{font-size:.9rem}
+  .hero-chips{gap:.5rem;flex-direction:column;align-items:center}
+  .hero-chip{width:100%;max-width:320px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .hero-actions .btn{width:100%;justify-content:center}
+
+  /* Sections */
+  .two-col,.form-row,.bid-grid,.item-edit-grid,.price-row,.stat-grid{grid-template-columns:1fr}
+  .section{padding:2.5rem 1.25rem}
+  #rsvp-anchor{scroll-margin-top:80px}
+
+  /* Donate */
+  .donate-full{padding:2rem 1.25rem}
+  .donate-full-inner{grid-template-columns:1fr}
+  .donate-qr-col{display:flex;flex-direction:column;align-items:center}
+
+  /* Page heroes */
+  .page-hero{padding:100px 1.25rem 2.5rem}
+  .page-hero h2{font-size:2rem}
+  .auction-header{padding:100px 1.25rem 2rem}
+  .auction-header h2{font-size:2rem}
+  .auction-grid{padding:1rem 1.25rem}
+  .auction-status-bar{padding:.75rem 1.25rem;gap:1rem}
+
+  /* Admin */
+  .admin-topbar{padding:80px 1.25rem 1rem;flex-direction:column;align-items:flex-start;gap:.25rem}
+  .admin-tabs-wrap{padding:0 1rem}
+  .admin-body{padding:1.25rem}
+  .admin-toolbar{flex-direction:column;align-items:flex-start}
+  table{font-size:11.5px}
+  th,td{padding:7px 10px}
+
+  /* Modals */
+  .modal{border-radius:12px}
+  .price-row{grid-template-columns:1fr 1fr}
 }
 
 /* GUEST NAMES MODAL */
@@ -280,7 +333,18 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
     <button class="nav-btn" id="nav-auction" onclick="showPage('auction')">Auction</button>
     <button class="nav-btn nav-cta" id="nav-rsvp" onclick="showPage('home');setTimeout(()=>document.getElementById('rsvp-anchor').scrollIntoView({behavior:'smooth'}),100)">RSVP</button>
   </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="nav-mobile-menu">
+  <button class="nav-mobile-btn" onclick="showPage('home');closeMobileMenu()">Home</button>
+  <button class="nav-mobile-btn" onclick="showPage('about');closeMobileMenu()">About</button>
+  <button class="nav-mobile-btn" onclick="showPage('auction');closeMobileMenu()">Auction</button>
+  <button class="nav-mobile-btn cta" onclick="showPage('home');closeMobileMenu();setTimeout(()=>document.getElementById('rsvp-anchor').scrollIntoView({behavior:'smooth'}),100)">RSVP &rarr;</button>
+</div>
 
 <!-- ========== HOME PAGE ========== -->
 <div class="page active" id="page-home">
@@ -591,6 +655,16 @@ function saveItemsToSheet() {
 window.addEventListener('scroll',function(){
   document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>20);
 });
+
+// ---- MOBILE MENU ----
+function toggleMobileMenu(){
+  document.getElementById('nav-mobile-menu').classList.toggle('open');
+  document.getElementById('nav-hamburger').classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('nav-mobile-menu').classList.remove('open');
+  document.getElementById('nav-hamburger').classList.remove('open');
+}
 
 // ---- PAGE ROUTING ----
 function showPage(p){
