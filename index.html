@@ -927,6 +927,7 @@ function updateModalPrices(id){
 }
 
 function refreshAuctionData(){
+  if(!document.getElementById('page-auction').classList.contains('active')) return;
   loadFromSheet('items',function(freshItems){
     if(!freshItems||freshItems.length===0) return;
     freshItems.forEach(function(fi){
@@ -1216,7 +1217,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var go=document.getElementById('guest-names-overlay');
   if(go) go.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');window._pendingRSVP=null;}});
   loadItemsFromSheet();
-  setInterval(refreshAuctionData, 15000);
+  setInterval(refreshAuctionData, 5000);
 });
 </script>
 
