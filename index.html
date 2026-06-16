@@ -1217,7 +1217,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var go=document.getElementById('guest-names-overlay');
   if(go) go.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');window._pendingRSVP=null;}});
   loadItemsFromSheet();
-  setInterval(refreshAuctionData, 5000);
+  setInterval(refreshAuctionData, 10000);
 });
 </script>
 
