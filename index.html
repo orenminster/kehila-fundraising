@@ -652,7 +652,7 @@ function postToSheet(data) {
 
 function loadFromSheet(action, callback) {
   if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE') !== -1) { if (callback) callback(null); return; }
-  fetch(SCRIPT_URL + '?action=' + action)
+  fetch(SCRIPT_URL + '?action=' + action + '&t=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(d) { if (callback) callback(d); })
     .catch(function() { if (callback) callback(null); });
