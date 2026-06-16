@@ -87,6 +87,7 @@ nav.scrolled{background:rgba(13,27,62,.97);box-shadow:0 2px 20px rgba(0,0,0,.3)}
 .form-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px;font-weight:600}
 .form-input,.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:14px;background:var(--cream);transition:border-color .2s,background .2s;outline:none;color:var(--text)}
 .form-input:focus,.form-select:focus{border-color:var(--teal);background:#fff}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
 .success-banner{background:#e8faf7;border:1px solid #9eddd4;color:#0a4f44;padding:12px 15px;border-radius:6px;font-size:13px;margin-top:.75rem;display:none}
 .success-banner.show{display:block}
 
@@ -562,7 +563,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
         <h4>New auction item</h4>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="new-title" placeholder="Artwork title"></div>
-          <div class="form-group"><label class="form-label">Artist / description</label><input class="form-input" id="new-desc" placeholder="Short description"></div>
+          <div class="form-group"><label class="form-label">Artist / description</label><textarea class="form-input form-textarea" id="new-desc" placeholder="Short description&#10;&#10;Press Enter for new lines" rows="4"></textarea></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Fair market value ($)</label><input class="form-input" id="new-fmv" type="number" placeholder="200"></div>
@@ -783,7 +784,7 @@ function openItemModal(id){
     '</div>'+
     '<div class="modal-body">'+
       '<div class="modal-hdr"><div class="modal-title">'+item.title+'</div><button class="modal-close" onclick="closeModal()">&#10005;</button></div>'+
-      '<p class="modal-desc">'+item.desc+'</p>'+
+      '<p class="modal-desc">'+item.desc.replace(/\n/g,'<br>')+'</p>'+
       '<div class="price-row">'+
         '<div class="price-cell"><div class="price-cell-label">Fair value</div><div class="price-cell-val">$'+item.fmv+'</div></div>'+
         '<div class="price-cell"><div class="price-cell-label">Starting bid</div><div class="price-cell-val">$'+item.startBid+'</div></div>'+
@@ -1039,7 +1040,7 @@ function renderAdminItems(){
       '</div>'+
       '<div class="item-edit-grid">'+
         '<div class="form-group"><label class="form-label">Title</label><input class="form-input" id="edit-title-'+item.id+'" value="'+item.title+'"></div>'+
-        '<div class="form-group"><label class="form-label">Description</label><input class="form-input" id="edit-desc-'+item.id+'" value="'+item.desc.replace(/"/g,"&quot;")+'"></div>'+
+        '<div class="form-group"><label class="form-label">Description</label><textarea class="form-input form-textarea" id="edit-desc-'+item.id+'" rows="5">'+item.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea></div>'+
         '<div class="form-group"><label class="form-label">FMV ($)</label><input class="form-input" type="number" id="edit-fmv-'+item.id+'" value="'+item.fmv+'"></div>'+
         '<div class="form-group"><label class="form-label">Starting bid ($)</label><input class="form-input" type="number" id="edit-start-'+item.id+'" value="'+item.startBid+'"></div>'+
         '<div class="form-group"><label class="form-label">Min. bid increment ($)</label><input class="form-input" type="number" id="edit-increment-'+item.id+'" value="'+(item.minIncrement||5)+'"></div>'+
