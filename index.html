@@ -216,6 +216,16 @@ tr:hover td{background:var(--cream)}
 .btn-danger-sm{background:#fff3f3;color:var(--danger);border:1px solid #f0b0b0;padding:5px 12px;font-size:11.5px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600}
 .btn-danger-sm:hover{background:#fde8e8}
 .btn-success-sm{background:#e8faf7;color:var(--success);border:1px solid #9eddd4;padding:5px 12px;font-size:11.5px;border-radius:4px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600}
+.toggle-wrap{display:flex;align-items:center;gap:8px;user-select:none;cursor:pointer}
+.toggle-wrap label{font-size:11.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:#ddd4c0;border-radius:20px;transition:background .2s}
+.toggle input:checked + .toggle-track{background:#f0c040}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(16px)}
+.item-card.is-hidden{border-style:dashed;border-color:#ddd4c0;opacity:.7}
+.badge-hidden{background:#fff8e1;color:#8a6500;border:1px solid #f0c040;display:inline-block;padding:2px 10px;border-radius:20px;font-size:10.5px;font-weight:700}
 
 /* LOGIN OVERLAY */
 .login-overlay{display:none;position:fixed;inset:0;background:rgba(5,10,30,.85);z-index:500;align-items:center;justify-content:center}
@@ -738,7 +748,7 @@ function currentBid(item){
 function renderAuctionGrid(){
   var grid=document.getElementById('auction-grid');
   grid.innerHTML='';
-  items.forEach(function(item){
+  items.filter(function(item){return !item.hidden;}).forEach(function(item){
     var tb=topBid(item);
     var cb=currentBid(item);
     var hasBids=item.bids.length>0;
@@ -1007,14 +1017,22 @@ function renderAdminItems(){
   items.forEach(function(item){
     var tb=topBid(item);
     var div=document.createElement('div');
-    div.className='item-card';
+    div.className='item-card'+(item.hidden?' is-hidden':'');
     div.innerHTML=
       '<div class="item-card-hdr">'+
         '<div>'+
-          '<div class="item-card-title">'+item.title+'</div>'+
+          '<div class="item-card-title">'+item.title+(item.hidden?' <span class="badge-hidden">Hidden</span>':'')+' </div>'+
           '<div class="item-card-meta">FMV $'+item.fmv+' &middot; Start $'+item.startBid+' &middot; '+item.bids.length+' bid(s)'+(tb?' &middot; Top: $'+tb.amount:'')+' &middot; <span class="badge '+(item.open?'badge-open':'badge-closed-badge')+'">'+(item.open?'Open':'Closed')+'</span></div>'+
         '</div>'+
         '<div class="item-card-actions">'+
+          '<label class="toggle-wrap" title="Hidden items are invisible to the public auction page">'+
+            '<span class="toggle">'+
+              '<input type="checkbox" id="toggle-hidden-'+item.id+'" '+(item.hidden?'checked':'')+' onchange="toggleHidden('+item.id+',this.checked)">'+
+              '<span class="toggle-track"></span>'+
+              '<span class="toggle-thumb"></span>'+
+            '</span>'+
+            '<label for="toggle-hidden-'+item.id+'" style="color:'+(item.hidden?'#8a6500':'var(--muted)')+'">'+( item.hidden?'Hidden from public':'Visible to public')+'</label>'+
+          '</label>'+
           '<button class="btn-success-sm" onclick="toggleItemStatus('+item.id+')">'+(item.open?'Close bidding':'Reopen')+'</button>'+
           '<button class="btn-danger-sm" onclick="deleteItem('+item.id+')">Delete</button>'+
         '</div>'+
@@ -1031,6 +1049,14 @@ function renderAdminItems(){
   });
 }
 
+function toggleHidden(id, val){
+  var item = items.find(function(i){ return i.id === id; });
+  if(item){
+    item.hidden = val;
+    if(val) item.open = false;
+    renderAdminItems();
+  }
+}
 function toggleItemStatus(id){
   var item=items.find(function(i){return i.id===id});
   if(item){ item.open=!item.open; saveItemsToSheet(); }
@@ -1065,7 +1091,7 @@ function addItem(){
   var start=parseFloat(document.getElementById('new-start').value)||0;
   var img=driveImgUrl(document.getElementById('new-img').value.trim());
   if(!title){alert('Title is required.');return;}
-  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,open:true,img:img,bids:[]});
+  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,open:true,img:img,bids:[],hidden:false});
   document.getElementById('new-title').value='';document.getElementById('new-desc').value='';
   document.getElementById('new-fmv').value='';document.getElementById('new-start').value='';
   document.getElementById('new-img').value='';
