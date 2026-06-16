@@ -932,8 +932,10 @@ function refreshAuctionData(){
     if(!freshItems||freshItems.length===0) return;
     freshItems.forEach(function(fi){
       var local=items.find(function(i){return i.id==fi.id;});
-      if(local){local.bids=fi.bids;local.open=fi.open;}
+      if(local){local.bids=fi.bids;local.open=fi.open;local.hidden=fi.hidden;}
+      else{items.push(fi);}
     });
+    items=items.filter(function(local){return freshItems.some(function(fi){return fi.id==local.id;});});
     var auctionActive=document.getElementById('page-auction').classList.contains('active');
     var modalOpen=document.getElementById('item-modal').classList.contains('open');
     if(auctionActive&&!modalOpen) renderAuctionGrid();
