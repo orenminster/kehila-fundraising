@@ -1054,6 +1054,7 @@ function toggleHidden(id, val){
   if(item){
     item.hidden = val;
     if(val) item.open = false;
+    saveItemsToSheet();
     renderAdminItems();
   }
 }
