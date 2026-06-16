@@ -930,15 +930,10 @@ function refreshAuctionData(){
   if(!document.getElementById('page-auction').classList.contains('active')) return;
   loadFromSheet('items',function(freshItems){
     if(!freshItems||freshItems.length===0) return;
-    freshItems.forEach(function(fi){
-      var local=items.find(function(i){return i.id==fi.id;});
-      if(local){local.bids=fi.bids;local.open=fi.open;local.hidden=fi.hidden;}
-      else{items.push(fi);}
-    });
-    items=items.filter(function(local){return freshItems.some(function(fi){return fi.id==local.id;});});
-    var auctionActive=document.getElementById('page-auction').classList.contains('active');
+    items=freshItems;
+    nextItemId=Math.max.apply(null,[0].concat(items.map(function(i){return i.id;})))+1;
     var modalOpen=document.getElementById('item-modal').classList.contains('open');
-    if(auctionActive&&!modalOpen) renderAuctionGrid();
+    if(!modalOpen) renderAuctionGrid();
     if(modalOpen&&window._openModalItemId) updateModalPrices(window._openModalItemId);
   });
 }
