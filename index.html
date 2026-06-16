@@ -88,6 +88,14 @@ nav.scrolled{background:rgba(13,27,62,.97);box-shadow:0 2px 20px rgba(0,0,0,.3)}
 .form-input,.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:14px;background:var(--cream);transition:border-color .2s,background .2s;outline:none;color:var(--text)}
 .form-input:focus,.form-select:focus{border-color:var(--teal);background:#fff}
 .form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.donor-credit{display:flex;align-items:center;gap:6px;background:rgba(13,27,62,.04);border-left:3px solid var(--teal);padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:1rem;font-size:13px}
+.donor-label{color:var(--muted);font-size:12px}
+.donor-name{color:var(--navy);font-weight:600}
+.donor-link{color:var(--teal-dark);font-weight:600;text-decoration:none}
+.donor-link:hover{text-decoration:underline}
+.donor-card-credit{font-size:11px;color:var(--muted);margin-bottom:.6rem;padding:3px 0}
+.donor-card-credit a{color:var(--teal-dark);text-decoration:none}
+.donor-card-credit a:hover{text-decoration:underline}
 .success-banner{background:#e8faf7;border:1px solid #9eddd4;color:#0a4f44;padding:12px 15px;border-radius:6px;font-size:13px;margin-top:.75rem;display:none}
 .success-banner.show{display:block}
 
@@ -570,6 +578,16 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
           <div class="form-group"><label class="form-label">Starting bid ($)</label><input class="form-input" id="new-start" type="number" placeholder="80"></div>
         </div>
         <div class="form-group"><label class="form-label">Image URL (optional)</label><input class="form-input" id="new-img" placeholder="https://..."></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Generously Donated By</label>
+            <input class="form-input" id="new-donor" placeholder="Donor name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Donor Website (optional)</label>
+            <input class="form-input" id="new-donor-url" type="url" placeholder="https://example.com">
+          </div>
+        </div>
         <div style="display:flex;gap:.7rem;margin-top:.75rem">
           <button class="btn btn-teal btn-sm" onclick="addItem()">Add item</button>
           <button class="btn btn-sm btn-outline" style="color:var(--muted);border-color:var(--border)" onclick="toggleAddForm()">Cancel</button>
@@ -763,6 +781,7 @@ function renderAuctionGrid(){
       '<div class="a-body">'+
         '<div class="a-title">'+item.title+'</div>'+
         '<div class="a-desc">'+item.desc+'</div>'+
+        (item.donor?'<div class="donor-card-credit">&#9825;&nbsp;Donated by '+(item.donorUrl?'<a href="'+item.donorUrl+'" target="_blank" rel="noopener">'+item.donor+'</a>':item.donor)+'</div>':'')+
         '<div class="a-bid-row">'+
           '<div><div class="a-bid-label">'+(hasBids?'Current bid':'Starting bid')+'</div><div class="a-bid-amt'+(hasBids?' winning':'')+'">$'+cb+'</div></div>'+
           '<div class="a-fair-val">FMV $'+item.fmv+'</div>'+
@@ -785,6 +804,7 @@ function openItemModal(id){
     '<div class="modal-body">'+
       '<div class="modal-hdr"><div class="modal-title">'+item.title+'</div><button class="modal-close" onclick="closeModal()">&#10005;</button></div>'+
       '<p class="modal-desc">'+item.desc.replace(/\n/g,'<br>')+'</p>'+
+      (item.donor?'<div class="donor-credit"><span class="donor-label">Generously donated by&nbsp;</span>'+(item.donorUrl?'<a href="'+item.donorUrl+'" target="_blank" rel="noopener" class="donor-link">'+item.donor+'</a>':'<span class="donor-name">'+item.donor+'</span>')+'</div>':'')+
       '<div class="price-row">'+
         '<div class="price-cell"><div class="price-cell-label">Fair value</div><div class="price-cell-val">$'+item.fmv+'</div></div>'+
         '<div class="price-cell"><div class="price-cell-label">Starting bid</div><div class="price-cell-val">$'+item.startBid+'</div></div>'+
@@ -1045,6 +1065,8 @@ function renderAdminItems(){
         '<div class="form-group"><label class="form-label">Starting bid ($)</label><input class="form-input" type="number" id="edit-start-'+item.id+'" value="'+item.startBid+'"></div>'+
         '<div class="form-group"><label class="form-label">Min. bid increment ($)</label><input class="form-input" type="number" id="edit-increment-'+item.id+'" value="'+(item.minIncrement||5)+'"></div>'+
         '<div class="form-group" style="grid-column:1/-1"><label class="form-label">Image URL</label><input class="form-input" id="edit-img-'+item.id+'" value="'+item.img+'"></div>'+
+        '<div class="form-group"><label class="form-label">Generously Donated By</label><input class="form-input" id="edit-donor-'+item.id+'" value="'+(item.donor||'').replace(/"/g,"&quot;")+'" placeholder="Donor name"></div>'+
+        '<div class="form-group"><label class="form-label">Donor Website (optional)</label><input class="form-input" id="edit-donor-url-'+item.id+'" type="url" value="'+(item.donorUrl||'').replace(/"/g,"&quot;")+'" placeholder="https://example.com"></div>'+
       '</div>'+
       '<button class="btn btn-teal btn-sm" style="margin-top:.6rem" onclick="saveItem('+item.id+')">Save changes</button>';
     container.appendChild(div);
@@ -1080,6 +1102,8 @@ function saveItem(id){
   item.startBid=parseFloat(document.getElementById('edit-start-'+id).value)||item.startBid;
   item.minIncrement=parseFloat(document.getElementById('edit-increment-'+id).value)||5;
   item.img=driveImgUrl(document.getElementById('edit-img-'+id).value);
+  item.donor=document.getElementById('edit-donor-'+id).value.trim();
+  item.donorUrl=document.getElementById('edit-donor-url-'+id).value.trim();
   saveItemsToSheet();
   renderAdminItems();
   alert('Saved.');
@@ -1095,10 +1119,11 @@ function addItem(){
   var start=parseFloat(document.getElementById('new-start').value)||0;
   var img=driveImgUrl(document.getElementById('new-img').value.trim());
   if(!title){alert('Title is required.');return;}
-  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,minIncrement:5,open:true,img:img,bids:[],hidden:false});
+  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,minIncrement:5,open:true,img:img,bids:[],hidden:false,donor:document.getElementById('new-donor').value.trim(),donorUrl:document.getElementById('new-donor-url').value.trim()});
   document.getElementById('new-title').value='';document.getElementById('new-desc').value='';
   document.getElementById('new-fmv').value='';document.getElementById('new-start').value='';
   document.getElementById('new-img').value='';
+  document.getElementById('new-donor').value='';document.getElementById('new-donor-url').value='';
   document.getElementById('add-item-form').classList.remove('open');
   saveItemsToSheet();
   renderAdminItems();
