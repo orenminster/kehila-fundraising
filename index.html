@@ -776,7 +776,7 @@ function openItemModal(id){
   if(!item) return;
   var tb=topBid(item);
   var cb=currentBid(item);
-  var minBid=cb+(item.bids.length?5:0);
+  var minBid=cb+(item.bids.length?(item.minIncrement||5):0);
   var html=
     '<div class="modal-img">'+(item.img?'<img src="'+item.img+'">'
       :'<div class="a-placeholder" style="font-size:1.1rem">&#127912;<br>Image coming soon</div>')+
@@ -1042,6 +1042,7 @@ function renderAdminItems(){
         '<div class="form-group"><label class="form-label">Description</label><input class="form-input" id="edit-desc-'+item.id+'" value="'+item.desc.replace(/"/g,"&quot;")+'"></div>'+
         '<div class="form-group"><label class="form-label">FMV ($)</label><input class="form-input" type="number" id="edit-fmv-'+item.id+'" value="'+item.fmv+'"></div>'+
         '<div class="form-group"><label class="form-label">Starting bid ($)</label><input class="form-input" type="number" id="edit-start-'+item.id+'" value="'+item.startBid+'"></div>'+
+        '<div class="form-group"><label class="form-label">Min. bid increment ($)</label><input class="form-input" type="number" id="edit-increment-'+item.id+'" value="'+(item.minIncrement||5)+'"></div>'+
         '<div class="form-group" style="grid-column:1/-1"><label class="form-label">Image URL</label><input class="form-input" id="edit-img-'+item.id+'" value="'+item.img+'"></div>'+
       '</div>'+
       '<button class="btn btn-teal btn-sm" style="margin-top:.6rem" onclick="saveItem('+item.id+')">Save changes</button>';
@@ -1076,6 +1077,7 @@ function saveItem(id){
   item.desc=document.getElementById('edit-desc-'+id).value;
   item.fmv=parseFloat(document.getElementById('edit-fmv-'+id).value)||item.fmv;
   item.startBid=parseFloat(document.getElementById('edit-start-'+id).value)||item.startBid;
+  item.minIncrement=parseFloat(document.getElementById('edit-increment-'+id).value)||5;
   item.img=driveImgUrl(document.getElementById('edit-img-'+id).value);
   saveItemsToSheet();
   renderAdminItems();
@@ -1092,7 +1094,7 @@ function addItem(){
   var start=parseFloat(document.getElementById('new-start').value)||0;
   var img=driveImgUrl(document.getElementById('new-img').value.trim());
   if(!title){alert('Title is required.');return;}
-  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,open:true,img:img,bids:[],hidden:false});
+  items.push({id:nextItemId++,title:title,desc:desc,fmv:fmv,startBid:start,minIncrement:5,open:true,img:img,bids:[],hidden:false});
   document.getElementById('new-title').value='';document.getElementById('new-desc').value='';
   document.getElementById('new-fmv').value='';document.getElementById('new-start').value='';
   document.getElementById('new-img').value='';
