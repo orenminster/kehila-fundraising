@@ -674,8 +674,12 @@ function loadRSVPsFromSheet(callback) {
   });
 }
 
+var _saveItemsTimer = null;
 function saveItemsToSheet() {
-  postToSheet({type: 'save_items', items: items});
+  clearTimeout(_saveItemsTimer);
+  _saveItemsTimer = setTimeout(function() {
+    postToSheet({type: 'save_items', items: items});
+  }, 400);
 }
 
 // ---- LOGO ----
