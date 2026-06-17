@@ -824,10 +824,10 @@ function openItemModal(id){
           '<div class="form-group"><label class="form-label">Your name <span style="color:var(--danger)">*</span></label><input class="form-input" id="bid-name-'+id+'" placeholder="Full name"></div>'+
           '<div class="form-group"><label class="form-label">Email <span style="color:var(--danger)">*</span></label><input class="form-input" id="bid-email-'+id+'" type="email" placeholder="you@example.com"></div>'+
           '<div class="form-group"><label class="form-label">Phone <span style="color:var(--danger)">*</span></label><input class="form-input" id="bid-phone-'+id+'" placeholder="905-555-0100"></div>'+
-          '<div class="form-group"><label class="form-label">Bid amount ($) <span style="color:var(--danger)">*</span></label><input class="form-input" id="bid-amt-'+id+'" type="number" min="'+minBid+'" placeholder="'+minBid+'" oninput="checkBidAmt(this,'+minBid+')"></div>'+
+          '<div class="form-group"><label class="form-label">Bid amount ($) <span style="color:var(--danger)">*</span></label><input class="form-input" id="bid-amt-'+id+'" type="number" min="'+minBid+'" placeholder="Enter your bid" oninput="checkBidAmt(this,'+minBid+')"><div id="bid-min-hint-'+id+'" style="font-size:11px;color:var(--muted);margin-top:3px">Minimum bid: $'+minBid+'</div></div>'+
         '</div>'+
         '<div id="bid-amt-msg-'+id+'" style="font-size:12px;color:var(--danger);margin-top:-4px;margin-bottom:4px;display:none">Minimum bid is $'+minBid+'. Please enter a higher amount.</div>'+
-        '<p class="privacy-note">&#128274;&nbsp; Your bid is confidential — other bidders will not see your name or amount. Minimum bid: $'+minBid+'. All fields required.</p>'+
+        '<p class="privacy-note">&#128274;&nbsp; Your bid is confidential — other bidders will not see your name or amount. All fields required.</p>'+
         '<div class="outbid-warn" id="modal-outbid-warn-'+id+'"></div>'+
         '<div class="bid-actions">'+
           '<button class="btn btn-teal btn-sm" onclick="submitBid('+id+','+minBid+')">Submit bid &rarr;</button>'+
@@ -909,7 +909,9 @@ function submitBid(id, minBid){
         var warn=document.getElementById('modal-outbid-warn-'+id);
         if(warn){warn.textContent='⚠️ Someone just bid $'+freshCb+'. New minimum is $'+freshMin+'.';warn.style.display='block';}
         var amtEl=document.getElementById('bid-amt-'+id);
-        if(amtEl){amtEl.value='';amtEl.min=freshMin;amtEl.placeholder=freshMin;}
+        if(amtEl){amtEl.value='';amtEl.min=freshMin;}
+        var hintEl=document.getElementById('bid-min-hint-'+id);
+        if(hintEl) hintEl.textContent='Minimum bid: $'+freshMin;
         return;
       }
     }
