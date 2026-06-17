@@ -780,7 +780,7 @@ function renderAuctionGrid(){
     card.className='a-card'+(item.open?'':' closed');
     card.onclick=function(){if(item.open||item.bids.length)openItemModal(item.id)};
     card.innerHTML=
-      '<div class="a-img">'+(item.img?'<img src="'+item.img+'" alt="'+item.title+'">'
+      '<div class="a-img">'+(item.img?'<img src="'+driveImgUrl(item.img)+'" alt="'+item.title+'">'
         :'<div class="a-placeholder">&#127912;<br>Image coming soon</div>')+
       '<span class="a-badge '+(item.open?'badge-live':'badge-closed-red')+'">'+(item.open?'Live':'Closed')+'</span></div>'+
       '<div class="a-body">'+
@@ -804,7 +804,7 @@ function openItemModal(id){
   var cb=currentBid(item);
   var minBid=cb+(item.bids.length?(item.minIncrement||5):0);
   var html=
-    '<div class="modal-img">'+(item.img?'<img src="'+item.img+'">'
+    '<div class="modal-img">'+(item.img?'<img src="'+driveImgUrl(item.img)+'">'
       :'<div class="a-placeholder" style="font-size:1.1rem">&#127912;<br>Image coming soon</div>')+
     '</div>'+
     '<div class="modal-body">'+
@@ -863,8 +863,13 @@ function checkBidAmt(el, minBid){
 }
 function driveImgUrl(url) {
   if (!url) return '';
+  if (url.includes('lh3.googleusercontent.com')) return url;
+  // Old thumbnail URLs already stored in sheet
+  var t = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (t) return 'https://lh3.googleusercontent.com/d/' + t[1];
+  // Share/view URLs
   var m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w800';
+  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
   return url;
 }
 function validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
