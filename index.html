@@ -137,6 +137,9 @@ nav.scrolled{background:rgba(13,27,62,.97);box-shadow:0 2px 20px rgba(0,0,0,.3)}
 .auction-status-bar{background:#fff;border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;font-size:13px}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auction-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;gap:.85rem;color:var(--muted);font-size:14px;grid-column:1/-1}
+.auction-spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .75s linear infinite}
 .auction-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;padding:2rem;max-width:960px;margin:0 auto}
 .a-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
 .a-card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(13,27,62,.12);border-color:var(--teal)}
@@ -663,6 +666,7 @@ function loadItemsFromSheet() {
     if (data && data.length > 0) {
       items = data;
       nextItemId = Math.max.apply(null, items.map(function(i) { return i.id; })) + 1;
+      if(document.getElementById('page-auction').classList.contains('active')) renderAuctionGrid();
     }
   });
 }
@@ -771,6 +775,10 @@ function currentBid(item){
 }
 function renderAuctionGrid(){
   var grid=document.getElementById('auction-grid');
+  if(items.length===0){
+    grid.innerHTML='<div class="auction-loading"><div class="auction-spinner"></div><span>Loading auction items&hellip;</span></div>';
+    return;
+  }
   grid.innerHTML='';
   items.filter(function(item){return !item.hidden;}).forEach(function(item){
     var tb=topBid(item);
