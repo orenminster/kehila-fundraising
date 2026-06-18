@@ -682,7 +682,8 @@ var _saveItemsTimer = null;
 function saveItemsToSheet() {
   clearTimeout(_saveItemsTimer);
   _saveItemsTimer = setTimeout(function() {
-    postToSheet({type: 'save_items', items: items});
+    var validItems = items.filter(function(i){ return i.id && !isNaN(Number(i.id)) && i.title; });
+    postToSheet({type: 'save_items', items: validItems});
     // Hold the lock for 2s while the POST executes on the server, then release
     _saveItemsTimer = setTimeout(function(){ _saveItemsTimer = null; }, 2000);
   }, 400);
@@ -782,7 +783,7 @@ function renderAuctionGrid(){
     return;
   }
   grid.innerHTML='';
-  items.filter(function(item){return !item.hidden;}).forEach(function(item){
+  items.filter(function(item){return !item.hidden && item.id && !isNaN(Number(item.id));}).forEach(function(item){
     var tb=topBid(item);
     var cb=currentBid(item);
     var hasBids=item.bids.length>0;
