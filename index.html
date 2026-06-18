@@ -683,6 +683,8 @@ function saveItemsToSheet() {
   clearTimeout(_saveItemsTimer);
   _saveItemsTimer = setTimeout(function() {
     postToSheet({type: 'save_items', items: items});
+    // Hold the lock for 2s while the POST executes on the server, then release
+    _saveItemsTimer = setTimeout(function(){ _saveItemsTimer = null; }, 2000);
   }, 400);
 }
 
