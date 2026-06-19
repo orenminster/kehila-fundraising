@@ -481,7 +481,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
         <div class="thermometer-bar-track">
           <div class="thermometer-bar-fill" id="therm-bar-fill"></div>
         </div>
-        <p class="thermometer-caption" id="therm-caption">E-transfer pledges + current auction bids</p>
+        <p class="thermometer-caption" id="therm-caption">Current total donations</p>
       </div>
     </div>
   </div>
@@ -1499,9 +1499,9 @@ function updateThermometer(){
   amountEl.textContent = '$' + Math.round(calc.total).toLocaleString() + ' of $' + goal.toLocaleString();
 
   if(isAuctionClosed()){
-    captionEl.textContent = 'E-transfer pledges + final auction bids (frozen after June 30)';
+    captionEl.textContent = 'Current total donations (auction bids frozen after June 30)';
   } else {
-    captionEl.textContent = 'E-transfer pledges + current auction bids';
+    captionEl.textContent = 'Current total donations';
   }
 }
 
