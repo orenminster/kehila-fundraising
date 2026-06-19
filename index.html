@@ -366,6 +366,33 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 .etransfer-row:last-child{border-bottom:none}
 .etransfer-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .etransfer-value{font-size:14px;font-weight:600;color:var(--navy)}
+.matching-section{background:var(--navy);padding:3rem 2rem}
+.matching-inner{max-width:760px;margin:0 auto}
+.countdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.countdown-card{border-radius:14px;padding:1.5rem}
+.countdown-auction{background:rgba(217,118,69,.08);border:1px solid rgba(217,118,69,.3)}
+.countdown-matching{background:rgba(240,196,64,.08);border:1px solid rgba(240,196,64,.3)}
+.countdown-label{text-align:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 .5rem}
+.countdown-auction .countdown-label{color:#F0997B}
+.countdown-matching .countdown-label{color:var(--gold)}
+.countdown-date{text-align:center;color:#fff;font-size:13px;margin:0 0 1rem}
+.countdown-timer{display:flex;justify-content:center;gap:8px}
+.countdown-unit{background:rgba(255,255,255,.06);border-radius:8px;padding:.5rem .6rem;min-width:50px;text-align:center}
+.countdown-num{display:block;color:#fff;font-size:1.2rem;font-weight:600;font-family:'DM Sans',monospace}
+.countdown-unit-label{display:block;color:rgba(255,255,255,.4);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.countdown-note{text-align:center;color:rgba(255,255,255,.35);font-size:10.5px;margin:.75rem 0 0}
+.thermometer-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.5rem;display:flex;align-items:center;gap:1.5rem}
+.thermometer-graphic{flex-shrink:0;width:36px;display:flex;flex-direction:column;align-items:center}
+.therm-tube{width:18px;height:90px;border:1.5px solid rgba(255,255,255,.3);border-radius:9px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.therm-fill{width:100%;background:var(--gold);border-radius:0 0 7px 7px;transition:height .6s ease}
+.therm-bulb{width:24px;height:24px;border-radius:50%;background:var(--gold);margin-top:-4px;border:1.5px solid rgba(255,255,255,.3)}
+.thermometer-stats{flex:1}
+.thermometer-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px}
+.thermometer-amount{color:#fff;font-weight:600}
+.thermometer-bar-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.thermometer-bar-fill{height:100%;background:var(--gold);transition:width .6s ease}
+.thermometer-caption{font-size:11px;color:rgba(255,255,255,.35);margin:6px 0 0}
+@media(max-width:640px){.countdown-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -404,20 +431,61 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
     <div class="hero-orb hero-orb3"></div>
     <div class="hero-grid"></div>
     <div class="hero-content">
-      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Annual Fundraiser &mdash; June 2026</div>
-      <h1>An evening of <em>art,</em><br>community &amp; giving</h1>
-      <p class="hero-sub">Student showcase &middot; Live auction &middot; Live music &middot; Dance &amp; poetry</p>
-      <div class="hero-chips">
-        <div class="hero-chip"><span class="hero-chip-icon">&#128197;</span><div><strong>Date</strong><span>Thursday, June 18, 2026</span></div></div>
-        <div class="hero-chip"><span class="hero-chip-icon">&#128336;</span><div><strong>Time</strong><span>5:30 &ndash; 7:00 pm</span></div></div>
-        <div class="hero-chip loc"><span class="hero-chip-icon">&#128205;</span><div><strong>Location</strong><span>Confirmed 24h before event</span></div></div>
-      </div>
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Thank you for joining us</div>
+      <h1>What an <em>unforgettable</em><br>evening</h1>
+      <p class="hero-sub">Thank you to everyone who joined us. A generous donor is now matching every dollar raised.</p>
       <div class="hero-actions">
-        <button class="btn btn-teal" onclick="document.getElementById('rsvp-anchor').scrollIntoView({behavior:'smooth'})">Reserve your place &rarr;</button>
+        <button class="btn btn-teal" onclick="openDonationChoice()">Donate now &rarr;</button>
         <button class="btn btn-outline" onclick="showPage('auction')">View the auction</button>
       </div>
     </div>
   </section>
+
+<section class="matching-section">
+  <div class="matching-inner">
+    <div class="countdown-grid">
+      <div class="countdown-card countdown-auction">
+        <p class="countdown-label">Auction closes</p>
+        <p class="countdown-date">June 30 &middot; 5:30 PM</p>
+        <div class="countdown-timer" id="auction-countdown">
+          <div class="countdown-unit"><span class="countdown-num" id="auc-days">--</span><span class="countdown-unit-label">days</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="auc-hours">--</span><span class="countdown-unit-label">hrs</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="auc-mins">--</span><span class="countdown-unit-label">min</span></div>
+        </div>
+        <p class="countdown-note">Bidding ends &mdash; pickup at the school</p>
+      </div>
+      <div class="countdown-card countdown-matching">
+        <p class="countdown-label">Matching campaign ends</p>
+        <p class="countdown-date">July 10</p>
+        <div class="countdown-timer" id="matching-countdown">
+          <div class="countdown-unit"><span class="countdown-num" id="match-days">--</span><span class="countdown-unit-label">days</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="match-hours">--</span><span class="countdown-unit-label">hrs</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="match-mins">--</span><span class="countdown-unit-label">min</span></div>
+        </div>
+        <p class="countdown-note">Last day every dollar is matched</p>
+      </div>
+    </div>
+
+    <div class="thermometer-card">
+      <div class="thermometer-graphic">
+        <div class="therm-tube">
+          <div class="therm-fill" id="therm-fill"></div>
+        </div>
+        <div class="therm-bulb"></div>
+      </div>
+      <div class="thermometer-stats">
+        <div class="thermometer-row">
+          <span>Current total donations</span>
+          <span class="thermometer-amount" id="therm-amount-display">$0 of $30,000</span>
+        </div>
+        <div class="thermometer-bar-track">
+          <div class="thermometer-bar-fill" id="therm-bar-fill"></div>
+        </div>
+        <p class="thermometer-caption" id="therm-caption">E-transfer pledges + current auction bids</p>
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- PROGRAMME + RSVP -->
   <div class="home-body">
@@ -549,10 +617,9 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
     <h2>Silent <span>Auction</span></h2>
     <p>Bid on original student artwork &mdash; all proceeds support Kehila Heschel School</p>
   </div>
-  <div class="auction-status-bar">
-    <span><span class="status-dot"></span><strong>Auction open</strong> &mdash; June 18, 2026</span>
+  <div class="auction-status-bar" id="auction-status-bar">
+    <span id="auction-status-text"><span class="status-dot"></span><strong>Auction open</strong></span>
     <span style="color:var(--muted)">&#128274; Bids are confidential</span>
-    <span style="color:var(--muted)">&#127979; Winning items available for pick-up at the school</span>
   </div>
   <div class="auction-grid" id="auction-grid"></div>
   <footer>
@@ -644,6 +711,9 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
       <div class="admin-toolbar">
         <div><strong>E-Transfer Pledges</strong><span class="count-badge" id="etransfer-count-badge">0</span></div>
         <button class="btn btn-sm btn-navy" onclick="downloadCSV('etransfer')">&#8595; Download CSV</button>
+      </div>
+      <div class="hl-box" style="margin-bottom:1rem">
+        <p id="admin-matching-summary">Total raised toward matching campaign: $0 (e-transfers: $0 + auction current bids: $0)</p>
       </div>
       <div class="table-wrap">
         <div class="empty-state" id="etransfer-empty">No e-transfer pledges yet.</div>
@@ -828,12 +898,13 @@ function renderAuctionGrid(){
     var cb=currentBid(item);
     var hasBids=item.bids.length>0;
     var card=document.createElement('div');
-    card.className='a-card'+(item.open?'':' closed');
-    card.onclick=function(){if(item.open||item.bids.length)openItemModal(item.id)};
+    var effectivelyOpen = item.open && !isAuctionClosed();
+    card.className='a-card'+(effectivelyOpen?'':' closed');
+    card.onclick=function(){if(effectivelyOpen||item.bids.length)openItemModal(item.id)};
     card.innerHTML=
       '<div class="a-img">'+(item.img?'<img src="'+driveImgUrl(item.img)+'" alt="'+item.title+'">'
         :'<div class="a-placeholder">&#127912;<br>Image coming soon</div>')+
-      '<span class="a-badge '+(item.open?'badge-live':'badge-closed-red')+'">'+(item.open?'Live':'Closed')+'</span></div>'+
+      '<span class="a-badge '+(effectivelyOpen?'badge-live':'badge-closed-red')+'">'+(effectivelyOpen?'Live':'Closed')+'</span></div>'+
       '<div class="a-body">'+
         '<div class="a-title">'+item.title+'</div>'+
         '<div class="a-desc">'+item.desc+'</div>'+
@@ -867,7 +938,8 @@ function openItemModal(id){
         '<div class="price-cell"><div class="price-cell-label">Starting bid</div><div class="price-cell-val">$'+item.startBid+'</div></div>'+
         '<div class="price-cell"><div class="price-cell-label">'+(item.bids.length?'Current bid':'No bids yet')+'</div><div class="price-cell-val'+(item.bids.length?' winning':'')+'" id="modal-currbid-'+id+'">$'+cb+'</div></div>'+
       '</div>';
-  if(item.open){
+  var effectivelyOpen = item.open && !isAuctionClosed();
+  if(effectivelyOpen){
     html+=
       '<div class="bid-form-box">'+
         '<h4>Place a bid</h4>'+
@@ -887,7 +959,7 @@ function openItemModal(id){
         '<div class="bid-success" id="bid-success-'+id+'">&#10003;&nbsp; Your bid was placed successfully. Good luck!</div>'+
       '</div>';
   } else {
-    html+='<div class="closed-notice">&#128274;&nbsp; Bidding is closed for this item.</div>';
+    html+='<div class="closed-notice">&#128274;&nbsp; Bidding has closed. Winning items are available for pickup at the school.</div>';
   }
   if(item.bids.length){
     html+='<div class="bid-history"><div class="bid-history-title">Bid history ('+item.bids.length+' bid'+(item.bids.length!==1?'s':'')+')</div>';
@@ -930,7 +1002,7 @@ function validateCAPhone(p){
 }
 function submitBid(id, minBid){
   var item=items.find(function(i){return i.id===id});
-  if(!item||!item.open) return;
+  if(!item||!item.open||isAuctionClosed()) return;
   var name=document.getElementById('bid-name-'+id).value.trim();
   var email=document.getElementById('bid-email-'+id).value.trim();
   var phone=document.getElementById('bid-phone-'+id).value.trim();
@@ -1148,6 +1220,14 @@ function renderAdmin(){
   }
   // E-Transfer Pledges
   document.getElementById('etransfer-count-badge').textContent=etransferPledges.length;
+  var matchCalc = calcMatchingTotal();
+  var summaryEl = document.getElementById('admin-matching-summary');
+  if(summaryEl){
+    summaryEl.textContent = 'Total raised toward matching campaign: $'
+      + Math.round(matchCalc.total).toLocaleString()
+      + ' (e-transfers: $' + Math.round(matchCalc.etransferTotal).toLocaleString()
+      + ' + auction current bids: $' + Math.round(matchCalc.auctionTotal).toLocaleString() + ')';
+  }
   var etb=document.getElementById('etransfer-tbody');
   etb.innerHTML='';
   if(etransferPledges.length){
@@ -1349,6 +1429,94 @@ document.addEventListener('DOMContentLoaded',function(){
     if(ov) ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
   });
 });
+
+var AUCTION_CLOSE = new Date('2026-06-30T17:30:00-04:00');
+var MATCHING_END = new Date('2026-07-10T23:59:59-04:00');
+
+function isAuctionClosed(){
+  return new Date() >= AUCTION_CLOSE;
+}
+
+function formatCountdownPart(ms){
+  if(ms <= 0) return {days:0, hours:0, mins:0};
+  var totalMins = Math.floor(ms / 60000);
+  var days = Math.floor(totalMins / 1440);
+  var hours = Math.floor((totalMins % 1440) / 60);
+  var mins = totalMins % 60;
+  return {days:days, hours:hours, mins:mins};
+}
+
+function pad2(n){ return n < 10 ? '0'+n : ''+n; }
+
+function updateCountdowns(){
+  var now = new Date();
+
+  var aucDiff = AUCTION_CLOSE - now;
+  var aucParts = formatCountdownPart(aucDiff);
+  var aucDaysEl = document.getElementById('auc-days');
+  if(aucDaysEl){
+    document.getElementById('auc-days').textContent = aucParts.days;
+    document.getElementById('auc-hours').textContent = pad2(aucParts.hours);
+    document.getElementById('auc-mins').textContent = pad2(aucParts.mins);
+  }
+
+  var matchDiff = MATCHING_END - now;
+  var matchParts = formatCountdownPart(matchDiff);
+  var matchDaysEl = document.getElementById('match-days');
+  if(matchDaysEl){
+    document.getElementById('match-days').textContent = matchParts.days;
+    document.getElementById('match-hours').textContent = pad2(matchParts.hours);
+    document.getElementById('match-mins').textContent = pad2(matchParts.mins);
+  }
+
+  updateThermometer();
+  updateAuctionStatusBar();
+}
+
+function calcMatchingTotal(){
+  var etransferTotal = etransferPledges.reduce(function(sum, p){ return sum + p.amount; }, 0);
+  var auctionTotal = 0;
+  items.forEach(function(item){
+    var tb = topBid(item);
+    if(tb) auctionTotal += tb.amount;
+  });
+  return { total: etransferTotal + auctionTotal, etransferTotal: etransferTotal, auctionTotal: auctionTotal };
+}
+
+function updateThermometer(){
+  var fillEl = document.getElementById('therm-fill');
+  var barFillEl = document.getElementById('therm-bar-fill');
+  var amountEl = document.getElementById('therm-amount-display');
+  var captionEl = document.getElementById('therm-caption');
+  if(!fillEl) return;
+
+  var calc = calcMatchingTotal();
+  var goal = 30000;
+  var pct = Math.min(100, (calc.total / goal) * 100);
+
+  fillEl.style.height = pct + '%';
+  barFillEl.style.width = pct + '%';
+  amountEl.textContent = '$' + Math.round(calc.total).toLocaleString() + ' of $' + goal.toLocaleString();
+
+  if(isAuctionClosed()){
+    captionEl.textContent = 'E-transfer pledges + final auction bids (frozen after June 30)';
+  } else {
+    captionEl.textContent = 'E-transfer pledges + current auction bids';
+  }
+}
+
+function updateAuctionStatusBar(){
+  var statusText = document.getElementById('auction-status-text');
+  if(!statusText) return;
+  if(isAuctionClosed()){
+    statusText.innerHTML = '<strong style="color:var(--danger)">Auction closed</strong> &mdash; winning items available for pickup at the school';
+  } else {
+    statusText.innerHTML = '<span class="status-dot"></span><strong>Auction open</strong>';
+  }
+}
+
+setInterval(updateCountdowns, 1000);
+updateCountdowns();
 </script>
 
 <!-- GUEST NAMES MODAL -->
@@ -1369,14 +1537,14 @@ document.addEventListener('DOMContentLoaded',function(){
         <div class="modal-title">How would you like to donate?</div>
         <button class="modal-close" onclick="closeDonationChoice()">&#10005;</button>
       </div>
-      <div class="donation-option-card" onclick="window.open('https://app.tuiopay.com//donation/gddef9c32cd07196735ce1cd2a0bdf582','_blank');closeDonationChoice()">
-        <div class="donation-option-title">Credit Card</div>
-        <div class="donation-option-desc">Pay securely online via TUIO. Processing fees apply.</div>
-      </div>
       <div class="donation-option-card donation-option-preferred" onclick="openETransferForm()">
         <div class="donation-option-badge">Preferred &mdash; no fees</div>
         <div class="donation-option-title">E-Transfer</div>
         <div class="donation-option-desc">Send directly to the school with no processing fees. A donation invoice will be sent to you.</div>
+      </div>
+      <div class="donation-option-card" onclick="window.open('https://app.tuiopay.com//donation/gddef9c32cd07196735ce1cd2a0bdf582','_blank');closeDonationChoice()">
+        <div class="donation-option-title">Credit Card</div>
+        <div class="donation-option-desc">Pay securely online via TUIO. Processing fees apply.</div>
       </div>
     </div>
   </div>
