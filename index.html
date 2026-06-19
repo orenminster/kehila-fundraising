@@ -1294,10 +1294,9 @@ function submitETransferPledge(){
   if(!email||!validateEmail(email)){alert('Please enter a valid email address.');return;}
   if(!phone||!validateCAPhone(phone)){alert('Please enter a valid Canadian phone number (e.g. 905-555-0100).');return;}
   if(!amount||amount<1){alert('Please enter a valid donation amount.');return;}
-  etransferPledges.push({
-    name:name, email:email, phone:phone, amount:amount,
-    ts:new Date().toLocaleString(), status:'Pending'
-  });
+  var ts=new Date().toLocaleString();
+  etransferPledges.push({name:name, email:email, phone:phone, amount:amount, ts:ts, status:'Pending'});
+  postToSheet({type:'etransfer', name:name, email:email, phone:phone, amount:amount, ts:ts});
   document.getElementById('etransfer-ref-display').textContent='Kehila School Donation';
   document.getElementById('etransfer-amount-display').textContent='$'+amount;
   document.getElementById('etransfer-name').value='';
