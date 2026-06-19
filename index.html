@@ -756,7 +756,7 @@ function showPage(p){
   if(nb) nb.classList.add('active');
   window.scrollTo(0,0);
   if(p==='auction') renderAuctionGrid();
-  if(p==='admin') loadRSVPsFromSheet(renderAdmin);
+  if(p==='admin'){ loadItemsFromSheet(); loadRSVPsFromSheet(renderAdmin); }
 }
 
 // ---- RSVP ----
