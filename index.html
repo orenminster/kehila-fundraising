@@ -341,6 +341,31 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 .guest-modal h3{font-size:1.4rem;color:var(--navy);margin:0 0 .25rem 0;}
 .gm-desc{font-size:12.5px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
 .guest-name-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem;}
+.donation-option-card{
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:1.1rem 1.25rem;margin-bottom:.9rem;cursor:pointer;
+  transition:border-color .2s,background .2s;position:relative;
+}
+.donation-option-card:hover{border-color:var(--teal);background:var(--cream)}
+.donation-option-preferred{border-color:var(--teal);background:rgba(0,201,177,.04)}
+.donation-option-badge{
+  display:inline-block;background:var(--teal);color:var(--navy);
+  font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 10px;border-radius:20px;margin-bottom:.5rem;
+}
+.donation-option-title{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--navy);margin-bottom:.25rem}
+.donation-option-desc{font-size:12.5px;color:var(--muted);line-height:1.5}
+.etransfer-instructions{
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:10px;padding:1rem 1.25rem;
+}
+.etransfer-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.6rem 0;border-bottom:1px solid var(--border);
+}
+.etransfer-row:last-child{border-bottom:none}
+.etransfer-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.etransfer-value{font-size:14px;font-weight:600;color:var(--navy)}
 </style>
 </head>
 <body>
@@ -452,7 +477,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
         <div class="donate-text-col">
           <h2 class="donate-title">Support the school</h2>
           <p class="donate-desc">Every donation supports programming, bursaries, and resources for our students. Together we keep Jewish day school education vibrant and accessible in Hamilton.</p>
-          <div class="donate-link-btn" onclick="window.open('https://app.tuiopay.com//donation/gddef9c32cd07196735ce1cd2a0bdf582','_blank')">Donate via TUIO &rarr;</div>
+          <div class="donate-link-btn" onclick="openDonationChoice()">Donate &rarr;</div>
           <p class="donate-tax">Kehila Heschel School is a registered Canadian charity.<br>Tax receipts issued for all donations.</p>
         </div>
         <div class="donate-qr-col">
@@ -548,6 +573,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
       <button class="admin-tab active" id="atab-rsvps" onclick="switchAdminTab('rsvps')">RSVPs</button>
       <button class="admin-tab" id="atab-items" onclick="switchAdminTab('items')">Auction Items</button>
       <button class="admin-tab" id="atab-bids" onclick="switchAdminTab('bids')">All Bids</button>
+      <button class="admin-tab" id="atab-etransfer" onclick="switchAdminTab('etransfer')">E-Transfer Pledges</button>
     </div>
   </div>
   <div class="admin-body">
@@ -610,6 +636,20 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
         <table id="bids-table" style="display:none">
           <thead><tr><th>#</th><th>Item</th><th>Bidder</th><th>Email</th><th>Phone</th><th>Amount</th></tr></thead>
           <tbody id="bids-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- E-Transfer Pledges -->
+    <div class="admin-sec" id="asec-etransfer">
+      <div class="admin-toolbar">
+        <div><strong>E-Transfer Pledges</strong><span class="count-badge" id="etransfer-count-badge">0</span></div>
+        <button class="btn btn-sm btn-navy" onclick="downloadCSV('etransfer')">&#8595; Download CSV</button>
+      </div>
+      <div class="table-wrap">
+        <div class="empty-state" id="etransfer-empty">No e-transfer pledges yet.</div>
+        <table id="etransfer-table" style="display:none">
+          <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Amount</th><th>Pledged</th></tr></thead>
+          <tbody id="etransfer-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -1106,6 +1146,22 @@ function renderAdmin(){
     document.getElementById('bids-empty').style.display='block';
     document.getElementById('bids-table').style.display='none';
   }
+  // E-Transfer Pledges
+  document.getElementById('etransfer-count-badge').textContent=etransferPledges.length;
+  var etb=document.getElementById('etransfer-tbody');
+  etb.innerHTML='';
+  if(etransferPledges.length){
+    document.getElementById('etransfer-empty').style.display='none';
+    document.getElementById('etransfer-table').style.display='table';
+    etransferPledges.forEach(function(p,i){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+(i+1)+'</td><td>'+p.name+'</td><td>'+p.email+'</td><td>'+p.phone+'</td><td><strong>$'+p.amount+'</strong></td><td style="font-size:11px;color:var(--muted)">'+p.ts+'</td>';
+      etb.appendChild(tr);
+    });
+  } else {
+    document.getElementById('etransfer-empty').style.display='block';
+    document.getElementById('etransfer-table').style.display='none';
+  }
 }
 
 function renderAdminItems(){
@@ -1210,6 +1266,48 @@ function deleteRSVP(i){
   renderAdmin();
 }
 
+// ---- DONATION FLOW ----
+var etransferPledges = [];
+
+function openDonationChoice(){
+  document.getElementById('donation-choice-overlay').classList.add('open');
+}
+function closeDonationChoice(){
+  document.getElementById('donation-choice-overlay').classList.remove('open');
+}
+function openETransferForm(){
+  closeDonationChoice();
+  document.getElementById('etransfer-form-overlay').classList.add('open');
+}
+function closeETransferForm(){
+  document.getElementById('etransfer-form-overlay').classList.remove('open');
+}
+function closeETransferInstructions(){
+  document.getElementById('etransfer-instructions-overlay').classList.remove('open');
+}
+function submitETransferPledge(){
+  var name=document.getElementById('etransfer-name').value.trim();
+  var email=document.getElementById('etransfer-email').value.trim();
+  var phone=document.getElementById('etransfer-phone').value.trim();
+  var amount=parseFloat(document.getElementById('etransfer-amount').value);
+  if(!name){alert('Please enter your full name.');return;}
+  if(!email||!validateEmail(email)){alert('Please enter a valid email address.');return;}
+  if(!phone||!validateCAPhone(phone)){alert('Please enter a valid Canadian phone number (e.g. 905-555-0100).');return;}
+  if(!amount||amount<1){alert('Please enter a valid donation amount.');return;}
+  etransferPledges.push({
+    name:name, email:email, phone:phone, amount:amount,
+    ts:new Date().toLocaleString(), status:'Pending'
+  });
+  document.getElementById('etransfer-ref-display').textContent='Kehila School Donation';
+  document.getElementById('etransfer-amount-display').textContent='$'+amount;
+  document.getElementById('etransfer-name').value='';
+  document.getElementById('etransfer-email').value='';
+  document.getElementById('etransfer-phone').value='';
+  document.getElementById('etransfer-amount').value='';
+  closeETransferForm();
+  document.getElementById('etransfer-instructions-overlay').classList.add('open');
+}
+
 // ---- CSV DOWNLOAD ----
 function downloadCSV(type){
   var rows, filename;
@@ -1226,11 +1324,16 @@ function downloadCSV(type){
     });
     rows=csvRows;
     filename='kehila-rsvps.csv';
-  } else {
+  } else if(type==='bids'){
     var allBids=[];
     items.forEach(function(item){item.bids.forEach(function(b){allBids.push([item.title,b.name,b.email,b.phone||'',b.amount])})});
     rows=[['Item','Bidder','Email','Phone','Amount ($)']].concat(allBids);
     filename='kehila-auction-bids.csv';
+  } else if(type==='etransfer'){
+    rows=[['Name','Email','Phone','Amount','Pledged At']].concat(
+      etransferPledges.map(function(p){return[p.name,p.email,p.phone,p.amount,p.ts]})
+    );
+    filename='kehila-etransfer-pledges.csv';
   }
   var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
   var a=document.createElement('a');
@@ -1242,6 +1345,10 @@ document.addEventListener('DOMContentLoaded',function(){
   if(go) go.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');window._pendingRSVP=null;}});
   loadItemsFromSheet();
   setInterval(refreshAuctionData, 10000);
+  ['donation-choice-overlay','etransfer-form-overlay','etransfer-instructions-overlay'].forEach(function(id){
+    var ov=document.getElementById(id);
+    if(ov) ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+  });
 });
 </script>
 
@@ -1256,5 +1363,80 @@ document.addEventListener('DOMContentLoaded',function(){
   </div>
 </div>
 
+<div class="modal-overlay" id="donation-choice-overlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-body">
+      <div class="modal-hdr">
+        <div class="modal-title">How would you like to donate?</div>
+        <button class="modal-close" onclick="closeDonationChoice()">&#10005;</button>
+      </div>
+      <div class="donation-option-card" onclick="window.open('https://app.tuiopay.com//donation/gddef9c32cd07196735ce1cd2a0bdf582','_blank');closeDonationChoice()">
+        <div class="donation-option-title">Credit Card</div>
+        <div class="donation-option-desc">Pay securely online via TUIO. Processing fees apply.</div>
+      </div>
+      <div class="donation-option-card donation-option-preferred" onclick="openETransferForm()">
+        <div class="donation-option-badge">Preferred &mdash; no fees</div>
+        <div class="donation-option-title">E-Transfer</div>
+        <div class="donation-option-desc">Send directly to the school with no processing fees. A donation invoice will be sent to you.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="etransfer-form-overlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-body">
+      <div class="modal-hdr">
+        <div class="modal-title">E-Transfer Donation</div>
+        <button class="modal-close" onclick="closeETransferForm()">&#10005;</button>
+      </div>
+      <p class="modal-desc">Enter your details below. A donation invoice will be sent to you once your e-transfer is received.</p>
+      <div class="form-group">
+        <label class="form-label">Full name <span style="color:var(--danger)">*</span></label>
+        <input class="form-input" id="etransfer-name" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email <span style="color:var(--danger)">*</span></label>
+        <input class="form-input" id="etransfer-email" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone <span style="color:var(--danger)">*</span></label>
+        <input class="form-input" id="etransfer-phone" placeholder="905-555-0100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Planned donation amount ($) <span style="color:var(--danger)">*</span></label>
+        <input class="form-input" id="etransfer-amount" type="number" min="1" placeholder="100">
+      </div>
+      <button class="btn btn-teal btn-block" onclick="submitETransferPledge()">Continue &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="etransfer-instructions-overlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-body">
+      <div class="modal-hdr">
+        <div class="modal-title">Send your e-transfer</div>
+        <button class="modal-close" onclick="closeETransferInstructions()">&#10005;</button>
+      </div>
+      <div class="etransfer-instructions">
+        <div class="etransfer-row">
+          <span class="etransfer-label">Send to</span>
+          <span class="etransfer-value">office@kehilaschool.ca</span>
+        </div>
+        <div class="etransfer-row">
+          <span class="etransfer-label">Reference</span>
+          <span class="etransfer-value" id="etransfer-ref-display">Kehila School Donation</span>
+        </div>
+        <div class="etransfer-row">
+          <span class="etransfer-label">Amount</span>
+          <span class="etransfer-value" id="etransfer-amount-display">$0</span>
+        </div>
+      </div>
+      <p class="modal-desc" style="margin-top:1rem">Thank you for your generosity. A donation invoice will be sent to you once your e-transfer is received.</p>
+      <button class="btn btn-navy btn-block" onclick="closeETransferInstructions()">Done</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
