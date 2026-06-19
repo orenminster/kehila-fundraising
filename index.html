@@ -366,32 +366,32 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 .etransfer-row:last-child{border-bottom:none}
 .etransfer-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .etransfer-value{font-size:14px;font-weight:600;color:var(--navy)}
-.matching-section{background:var(--navy);padding:3rem 2rem}
+.matching-section{background:var(--cream);padding:3rem 2rem}
 .matching-inner{max-width:760px;margin:0 auto}
 .countdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
 .countdown-card{border-radius:14px;padding:1.5rem}
-.countdown-auction{background:rgba(217,118,69,.08);border:1px solid rgba(217,118,69,.3)}
-.countdown-matching{background:rgba(240,196,64,.08);border:1px solid rgba(240,196,64,.3)}
+.countdown-auction{background:#fff;border:1px solid rgba(217,118,69,.35)}
+.countdown-matching{background:#fff;border:1px solid rgba(240,196,64,.4)}
 .countdown-label{text-align:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 .5rem}
-.countdown-auction .countdown-label{color:#F0997B}
-.countdown-matching .countdown-label{color:var(--gold)}
-.countdown-date{text-align:center;color:#fff;font-size:13px;margin:0 0 1rem}
+.countdown-auction .countdown-label{color:var(--danger)}
+.countdown-matching .countdown-label{color:#8a6500}
+.countdown-date{text-align:center;color:var(--navy);font-size:13px;margin:0 0 1rem}
 .countdown-timer{display:flex;justify-content:center;gap:8px}
-.countdown-unit{background:rgba(255,255,255,.06);border-radius:8px;padding:.5rem .6rem;min-width:50px;text-align:center}
-.countdown-num{display:block;color:#fff;font-size:1.2rem;font-weight:600;font-family:'DM Sans',monospace}
-.countdown-unit-label{display:block;color:rgba(255,255,255,.4);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
-.countdown-note{text-align:center;color:rgba(255,255,255,.35);font-size:10.5px;margin:.75rem 0 0}
-.thermometer-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1.5rem;display:flex;align-items:center;gap:1.5rem}
+.countdown-unit{background:var(--cream2);border-radius:8px;padding:.5rem .6rem;min-width:50px;text-align:center}
+.countdown-num{display:block;color:var(--navy);font-size:1.2rem;font-weight:600;font-family:'DM Sans',monospace}
+.countdown-unit-label{display:block;color:var(--muted);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.countdown-note{text-align:center;color:var(--muted);font-size:10.5px;margin:.75rem 0 0}
+.thermometer-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.5rem;display:flex;align-items:center;gap:1.5rem}
 .thermometer-graphic{flex-shrink:0;width:36px;display:flex;flex-direction:column;align-items:center}
-.therm-tube{width:18px;height:90px;border:1.5px solid rgba(255,255,255,.3);border-radius:9px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.therm-tube{width:18px;height:90px;border:1.5px solid var(--border);border-radius:9px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
 .therm-fill{width:100%;background:var(--gold);border-radius:0 0 7px 7px;transition:height .6s ease}
-.therm-bulb{width:24px;height:24px;border-radius:50%;background:var(--gold);margin-top:-4px;border:1.5px solid rgba(255,255,255,.3)}
+.therm-bulb{width:24px;height:24px;border-radius:50%;background:var(--gold);margin-top:-4px;border:1.5px solid var(--border)}
 .thermometer-stats{flex:1}
-.thermometer-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px}
-.thermometer-amount{color:#fff;font-weight:600}
-.thermometer-bar-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.thermometer-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
+.thermometer-amount{color:var(--navy);font-weight:600}
+.thermometer-bar-track{height:8px;background:var(--cream2);border-radius:4px;overflow:hidden}
 .thermometer-bar-fill{height:100%;background:var(--gold);transition:width .6s ease}
-.thermometer-caption{font-size:11px;color:rgba(255,255,255,.35);margin:6px 0 0}
+.thermometer-caption{font-size:11px;color:var(--muted);margin:6px 0 0}
 @media(max-width:640px){.countdown-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -406,7 +406,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
     <button class="nav-btn active" id="nav-home" onclick="showPage('home')">Home</button>
     <button class="nav-btn" id="nav-about" onclick="showPage('about')">About</button>
     <button class="nav-btn" id="nav-auction" onclick="showPage('auction')">Auction</button>
-    <button class="nav-btn nav-cta" id="nav-rsvp" onclick="showPage('home');setTimeout(()=>document.getElementById('rsvp-anchor').scrollIntoView({behavior:'smooth'}),100)">RSVP</button>
+    <button class="nav-btn nav-cta" id="nav-rsvp" onclick="openDonationChoice()">Donate</button>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -489,7 +489,7 @@ footer a{color:rgba(255,255,255,.25);text-decoration:none}.footer a:hover{color:
 
   <!-- PROGRAMME + RSVP -->
   <div class="home-body">
-    <div class="section two-col">
+    <div class="section two-col" style="display:none">
 
       <!-- LEFT: Programme -->
       <div>
