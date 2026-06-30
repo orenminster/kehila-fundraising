@@ -898,7 +898,7 @@ function renderAuctionGrid(){
     var cb=currentBid(item);
     var hasBids=item.bids.length>0;
     var card=document.createElement('div');
-    var effectivelyOpen = item.open && !isAuctionClosed();
+    var effectivelyOpen = item.open;
     card.className='a-card'+(effectivelyOpen?'':' closed');
     card.onclick=function(){if(effectivelyOpen||item.bids.length)openItemModal(item.id)};
     card.innerHTML=
@@ -938,7 +938,7 @@ function openItemModal(id){
         '<div class="price-cell"><div class="price-cell-label">Starting bid</div><div class="price-cell-val">$'+item.startBid+'</div></div>'+
         '<div class="price-cell"><div class="price-cell-label">'+(item.bids.length?'Current bid':'No bids yet')+'</div><div class="price-cell-val'+(item.bids.length?' winning':'')+'" id="modal-currbid-'+id+'">$'+cb+'</div></div>'+
       '</div>';
-  var effectivelyOpen = item.open && !isAuctionClosed();
+  var effectivelyOpen = item.open;
   if(effectivelyOpen){
     html+=
       '<div class="bid-form-box">'+
@@ -1002,7 +1002,7 @@ function validateCAPhone(p){
 }
 function submitBid(id, minBid){
   var item=items.find(function(i){return i.id===id});
-  if(!item||!item.open||isAuctionClosed()) return;
+  if(!item||!item.open) return;
   var name=document.getElementById('bid-name-'+id).value.trim();
   var email=document.getElementById('bid-email-'+id).value.trim();
   var phone=document.getElementById('bid-phone-'+id).value.trim();
@@ -1508,7 +1508,8 @@ function updateThermometer(){
 function updateAuctionStatusBar(){
   var statusText = document.getElementById('auction-status-text');
   if(!statusText) return;
-  if(isAuctionClosed()){
+  var anyOpen = items && items.some(function(i){ return i.open; });
+  if(!anyOpen){
     statusText.innerHTML = '<strong style="color:var(--danger)">Auction closed</strong> &mdash; winning items available for pickup at the school';
   } else {
     statusText.innerHTML = '<span class="status-dot"></span><strong>Auction open</strong>';
