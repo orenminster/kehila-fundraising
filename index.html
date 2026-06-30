@@ -1349,6 +1349,15 @@ function deleteRSVP(i){
 // ---- DONATION FLOW ----
 var etransferPledges = [];
 
+function loadETransferPledgesFromSheet() {
+  loadFromSheet('etransfer', function(data) {
+    if (data && Array.isArray(data)) {
+      etransferPledges = data;
+      updateThermometer();
+    }
+  });
+}
+
 function openDonationChoice(){
   document.getElementById('donation-choice-overlay').classList.add('open');
 }
@@ -1423,7 +1432,9 @@ document.addEventListener('DOMContentLoaded',function(){
   var go=document.getElementById('guest-names-overlay');
   if(go) go.addEventListener('click',function(e){if(e.target===this){this.classList.remove('open');window._pendingRSVP=null;}});
   loadItemsFromSheet();
+  loadETransferPledgesFromSheet();
   setInterval(refreshAuctionData, 10000);
+  setInterval(loadETransferPledgesFromSheet, 60000);
   ['donation-choice-overlay','etransfer-form-overlay','etransfer-instructions-overlay'].forEach(function(id){
     var ov=document.getElementById(id);
     if(ov) ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
